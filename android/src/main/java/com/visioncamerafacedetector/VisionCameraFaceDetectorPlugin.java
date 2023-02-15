@@ -36,6 +36,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
       .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
       .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
       .setMinFaceSize(0.15f)
+      .enableTracking()
       .build();
   FaceDetector faceDetector = FaceDetection.getClient(options);
  private WritableMap processBoundingBox(Rect boundingBox) {
@@ -147,6 +148,7 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           map.putMap("bounds", bounds);
           map.putMap("contours", contours);
           map.putString("imageResult", imageResult);
+          map.putInt("faceId",face.getTrackingId());
           array.pushMap(map);
         }
         return array;
