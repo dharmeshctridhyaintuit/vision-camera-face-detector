@@ -33,8 +33,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   FaceDetectorOptions options =
     new FaceDetectorOptions.Builder()
       .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-      .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-      .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+      .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
+      .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
       .setMinFaceSize(0.15f)
       .enableTracking()
       .build();
@@ -140,13 +140,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           map.putDouble("rollAngle", face.getHeadEulerAngleZ()); // Head is rotated to the left rotZ degrees
           map.putDouble("pitchAngle", face.getHeadEulerAngleX()); // Head is rotated to the right rotX degrees
           map.putDouble("yawAngle", face.getHeadEulerAngleY());  // Head is tilted sideways rotY degrees
-          map.putDouble("leftEyeOpenProbability", face.getLeftEyeOpenProbability());
-          map.putDouble("rightEyeOpenProbability", face.getRightEyeOpenProbability());
-          map.putDouble("smilingProbability", face.getSmilingProbability());
-          WritableMap contours = processFaceContours(face);
           WritableMap bounds = processBoundingBox(face.getBoundingBox());
           map.putMap("bounds", bounds);
-          map.putMap("contours", contours);
           map.putString("imageResult", imageResult);
           map.putInt("faceId",face.getTrackingId());
           array.pushMap(map);
