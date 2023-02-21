@@ -41,21 +41,13 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   FaceDetector faceDetector = FaceDetection.getClient(options);
  private WritableMap processBoundingBox(Rect boundingBox) {
     WritableMap bounds = Arguments.createMap();
-    // Calculate offset (we need to center the overlay on the target)
-    Double offsetX = (boundingBox.exactCenterX() - ceil(boundingBox.width())) / 2.0f;
-    Double offsetY = (boundingBox.exactCenterY() - ceil(boundingBox.height())) / 2.0f;
-    Double x = boundingBox.right + offsetX;
-    Double y = boundingBox.top + offsetY;
-    bounds.putDouble("x", boundingBox.centerX() + (boundingBox.centerX() - x));
-    bounds.putDouble("y", boundingBox.centerY() + (y - boundingBox.centerY()));
+
+    bounds.putDouble("x", boundingBox.left);
+    bounds.putDouble("y", boundingBox.top);
+
     bounds.putDouble("width", boundingBox.width());
     bounds.putDouble("height", boundingBox.height());
 
-
-    bounds.putDouble("boundingCenterX", boundingBox.centerX());
-    bounds.putDouble("boundingCenterY", boundingBox.centerY());
-    bounds.putDouble("boundingExactCenterX", boundingBox.exactCenterX());
-    bounds.putDouble("boundingExactCenterY", boundingBox.exactCenterY());
     return bounds;
   }
   private WritableMap processFaceContours(Face face) {
@@ -135,14 +127,14 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           matrix.postTranslate(-faceBB.left, -faceBB.top);
           matrix.postScale(sx, sy);
            cvFace.drawBitmap(bmpFrameResult, matrix, null);
-          String imageResult = new Convert().getBase64Image(bmpFrameResult);
+          //String imageResult = new Convert().getBase64Image(bmpFrameResult);
 
           map.putDouble("rollAngle", face.getHeadEulerAngleZ()); // Head is rotated to the left rotZ degrees
           map.putDouble("pitchAngle", face.getHeadEulerAngleX()); // Head is rotated to the right rotX degrees
           map.putDouble("yawAngle", face.getHeadEulerAngleY());  // Head is tilted sideways rotY degrees
           WritableMap bounds = processBoundingBox(face.getBoundingBox());
           map.putMap("bounds", bounds);
-          map.putString("imageResult", imageResult);
+          //map.putString("imageResult", imageResult);
           map.putInt("faceId",face.getTrackingId());
           array.pushMap(map);
         }
