@@ -115,26 +115,32 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
         WritableNativeArray array = new WritableNativeArray();
         List<Face> faces = Tasks.await(task);
         Bitmap bmpFrameResult = ImageConvertUtils.getInstance().getUpRightBitmap(image);
+           int paddingTop =(int) (150/1.5);
+           int paddingBottom=(int) (100/1.5);
+           int paddingRight=(int) (40/1.5);
+           int paddingLeft=(int) (40/1.5);
 
         for (Face face : faces) {
           WritableMap map = new WritableNativeMap();
-          Bitmap bmpFaceResult = Bitmap.createBitmap(TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE, Bitmap.Config.ARGB_8888);
           final RectF faceBB = new RectF(face.getBoundingBox());
-           final Canvas cvFace = new Canvas(bmpFaceResult);
-          float sx = ((float) TF_OD_API_INPUT_SIZE) / faceBB.width();
-          float sy = ((float) TF_OD_API_INPUT_SIZE) / faceBB.height();
+          int tempHeight=(int) faceBB.height()+paddingTop+paddingBottom;
+          int tempWidth=(int) faceBB.width()+paddingRight+paddingLeft;
+          Bitmap bmpFaceResult = Bitmap.createBitmap(tempWidth, tempHeight, Bitmap.Config.ARGB_8888);
+          final Canvas cvFace = new Canvas(bmpFaceResult);
+          float sx = ((float) tempWidth/2) / faceBB.width();
+          float sy = ((float) tempHeight/2) / faceBB.height();
           Matrix matrix = new Matrix();
-          matrix.postTranslate(-faceBB.left, -faceBB.top);
-          matrix.postScale(sx, sy);
-           cvFace.drawBitmap(bmpFrameResult, matrix, null);
-          //String imageResult = new Convert().getBase64Image(bmpFrameResult);
+          matrix.postTranslate((-faceBB.left+paddingLeft), (-faceBB.top+paddingTop));
+          //matrix.postScale(sx, sy);
+          cvFace.drawBitmap(bmpFrameResult, matrix, null);
+          String imageResult = new Convert().getBase64Image(bmpFaceResult);
 
           map.putDouble("rollAngle", face.getHeadEulerAngleZ()); // Head is rotated to the left rotZ degrees
           map.putDouble("pitchAngle", face.getHeadEulerAngleX()); // Head is rotated to the right rotX degrees
           map.putDouble("yawAngle", face.getHeadEulerAngleY());  // Head is tilted sideways rotY degrees
           WritableMap bounds = processBoundingBox(face.getBoundingBox());
           map.putMap("bounds", bounds);
-          //map.putString("imageResult", imageResult);
+          map.putString("imageResult", imageResult);
           map.putInt("faceId",face.getTrackingId());
           array.pushMap(map);
         }
