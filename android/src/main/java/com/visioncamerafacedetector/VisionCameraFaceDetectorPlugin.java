@@ -105,6 +105,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
   @SuppressLint("NewApi")
   @Override
   public Object callback(ImageProxy frame, Object[] params) {
+    String temp =  String.valueOf(params[0]);
+    int faceIdGet= (int) Double.parseDouble(temp);
     @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
 
@@ -140,7 +142,9 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           map.putDouble("yawAngle", face.getHeadEulerAngleY());  // Head is tilted sideways rotY degrees
           WritableMap bounds = processBoundingBox(face.getBoundingBox());
           map.putMap("bounds", bounds);
-          map.putString("imageResult", imageResult);
+          if (face.getTrackingId() == faceIdGet) {
+            map.putString("imageResult", imageResult);
+          }
           map.putInt("faceId",face.getTrackingId());
           array.pushMap(map);
         }
