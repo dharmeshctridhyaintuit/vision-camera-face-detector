@@ -135,7 +135,8 @@ public class VisionCameraFaceDetectorPlugin extends FrameProcessorPlugin {
           matrix.postTranslate((-faceBB.left+paddingLeft), (-faceBB.top+paddingTop));
           //matrix.postScale(sx, sy);
           cvFace.drawBitmap(bmpFrameResult, matrix, null);
-          String imageResult = new Convert().getBase64Image(bmpFaceResult);
+          String temp = new Convert().getBase64Image(bmpFaceResult);
+          String imageResult=temp.replaceAll("\\s", "");
 
           map.putDouble("rollAngle", face.getHeadEulerAngleZ()); // Head is rotated to the left rotZ degrees
           map.putDouble("pitchAngle", face.getHeadEulerAngleX()); // Head is rotated to the right rotX degrees
